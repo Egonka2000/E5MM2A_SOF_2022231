@@ -5,7 +5,7 @@
 @if (SignInManager.IsSignedIn(User) && await UserManager.IsInRoleAsync(await  UserManager.GetUserAsync(User), "Admin"))
 {
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Admin">Edit Shoes</a>
+        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="AdminEdit">Edit Shoes</a>
     </li>
     <li class="nav-item">
         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Users">Edit Users</a>

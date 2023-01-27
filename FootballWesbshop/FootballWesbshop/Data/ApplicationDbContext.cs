@@ -17,10 +17,9 @@ namespace FootballWesbshop.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Shoe>()
-                .HasOne(t => t.Owner)
-                .WithMany()
-                .HasForeignKey(t => t.OwnerId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasMany<SiteUser>(t => t.Owners)
+                .WithMany(t => t.Cart);
+                
 
             builder.Entity<Shoe>()
                 .HasOne(t => t.Brand)

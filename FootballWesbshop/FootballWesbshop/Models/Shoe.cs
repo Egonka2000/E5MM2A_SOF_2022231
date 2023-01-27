@@ -9,19 +9,20 @@ namespace FootballWesbshop.Models
         public string Uid { get; set; }
         public string Price { get; set; }
         public string Size { get; set; }
-        public string OwnerId { get; set; }
-
-        [NotMapped]
-        public virtual SiteUser Owner { get; set; }
-
+        public string? ContentType { get; set; }
+        public byte[]? Data { get; set; }
         public string BrandId { get; set; }
 
         [NotMapped]
         public virtual Brand Brand { get; set; }
 
+        [NotMapped]
+        public virtual ICollection<SiteUser> Owners { get; set; }
+
         public Shoe()
         {
             Uid = Guid.NewGuid().ToString();
+            Owners = new HashSet<SiteUser>();
         }
     }
 }

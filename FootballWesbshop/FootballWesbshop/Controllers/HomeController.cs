@@ -42,15 +42,11 @@ namespace FootballWesbshop.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public IActionResult Admin()
+        public async Task<IActionResult> GrantAdmin(string uid)
         {
-            return View(_db.Shoes);
-        }
-
-        [Authorize(Roles = "Admin")]
-        public IActionResult Users()
-        {
-            return View(_userManager.Users);
+            var user = _userManager.Users.FirstOrDefault(t => t.Id == uid);
+            await _userManager.AddToRoleAsync(user, "Admin");
+            return RedirectToAction(nameof(Users));
         }
 
         [Authorize(Roles = "Admin")]
@@ -62,12 +58,20 @@ namespace FootballWesbshop.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GrantAdmin(string uid)
+        public IActionResult AdminEdit()
         {
-            var user = _userManager.Users.FirstOrDefault(t => t.Id == uid);
-            await _userManager.AddToRoleAsync(user, "Admin");
-            return RedirectToAction(nameof(Users));
+            return View(_db.Shoes);
         }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Users()
+        {
+            return View(_userManager.Users);
+        }
+
+        
+
+        
 
         public IActionResult Index()
         {
@@ -82,23 +86,32 @@ namespace FootballWesbshop.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult Add(Shoe shoe)
+        public async Task<IActionResult> Add(Shoe shoe, IFormFile picturedata)
         {
-            shoe.OwnerId = _userManager.GetUserId(this.User);
+            var user = await _userManager.GetUserAsync(User);
+            using (var stream = picturedata.OpenReadStream())
+            {
+                byte[] buffer = new byte[picturedata.Length];
+                stream.Read(buffer, 0, (int)picturedata.Length);
+                shoe.Data = buffer;
+                shoe.ContentType = picturedata.ContentType;
+            }
+            //shoe.OwnerId = _userManager.GetUserId(this.User);
             shoe.BrandId = _db.Brands.FirstOrDefault(t => t.Name == shoe.BrandId).Uid;
-            var old = _db.Shoes.FirstOrDefault(t => t.Price == shoe.Price && t.OwnerId == shoe.OwnerId);
-            if(old == null) 
+            var old = _db.Shoes.FirstOrDefault(t => t.Uid == shoe.Uid);
+            if (old == null)
             {
                 _db.Shoes.Add(shoe);
                 _db.SaveChanges();
             }
+
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Delete (string uid)
+        public IActionResult Delete(string uid)
         {
             var item = _db.Shoes.FirstOrDefault(t => t.Uid == uid);
-            if(item != null && item.OwnerId == _userManager.GetUserId(this.User)) 
+            if (item != null)
             {
                 _db.Shoes.Remove(item);
                 _db.SaveChanges();
@@ -124,9 +137,40 @@ namespace FootballWesbshop.Controllers
             return new FileContentResult(user.Data, user.ContentType);
         }
 
-        public IActionResult Privacy()
+        public IActionResult GetShoeImage(string id)
         {
-            return View();
+            var shoe = _db.Shoes.FirstOrDefault(t => t.Uid == id);
+            if (shoe.ContentType.Length >= 3)
+                return new FileContentResult(shoe.Data, shoe.ContentType);
+            else
+                return BadRequest();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> AddToCart(string shoeid)
+        {
+            var shoe = _db.Shoes.FirstOrDefault(t => t.Uid == shoeid);
+            if(shoe != null)
+            {
+                var user = await _userManager.GetUserAsync(this.User);
+                _db.Users.FirstOrDefault(t => t.Id == user.Id).Cart.Add(shoe);
+                _db.SaveChanges();
+            }
+            return RedirectToAction(nameof(Index));
+
+        }
+
+        [Authorize]
+        public async Task<IActionResult> RemoveFromCart(string shoeid)
+        {
+            var shoe = _db.Shoes.FirstOrDefault(t => t.Uid == shoeid);
+            if (shoe != null)
+            {
+                var user = await _userManager.GetUserAsync(this.User);
+                user.Cart.Remove(shoe);
+                _db.SaveChanges();
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

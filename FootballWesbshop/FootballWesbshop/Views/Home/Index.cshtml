@@ -3,17 +3,30 @@
 @inject SignInManager<SiteUser> SignInManager
 @inject UserManager<SiteUser> UserManager
 
-@foreach(var shoe in Model.GroupBy(t => t.Price)){
+@foreach(var shoe in Model.GroupBy(t => t.Brand.Name)){
     <li>@shoe.Key
         <ul>
             @foreach(var item in shoe)
             {
                 <li>
-                    <img src="@Url.Action("GetImage", "Home", new {userid = item.OwnerId})"/>
-                    @item.Owner.FirstName @item.Owner.LastName
-                    @if (item.OwnerId == UserManager.GetUserId(User))
+                    <img src="@Url.Action("GetShoeImage", "Home", new {id = item.Uid})"/>
+                </li>
+                <li>
+                    <label>Price:</label>
+                    @item.Price 
+                </li>
+                <li>
+                    <label>Size:</label>
+                    @item.Size
+                </li>
+                <li>
+                    @if (!(await UserManager.GetUserAsync(User) as SiteUser).Cart.Contains(item))
                     {
-                        <a href="Home/Delete?uid=@item.Uid">Delete</a>
+                        <a class="btn btn-success" href="Home/AddToCart?shoeid=@item.Uid">Add To Cart</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-danger" href="Home/RemoveFromCart?shoeid=@item.Uid">Remove From Cart</a>
                     }
                 </li>
             }

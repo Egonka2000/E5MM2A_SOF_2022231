@@ -57,9 +57,11 @@ namespace FootballWesbshop.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("OwnerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("ContentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Data")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Price")
                         .IsRequired()
@@ -72,8 +74,6 @@ namespace FootballWesbshop.Migrations
                     b.HasKey("Uid");
 
                     b.HasIndex("BrandId");
-
-                    b.HasIndex("OwnerId");
 
                     b.ToTable("Shoes");
                 });
@@ -286,6 +286,21 @@ namespace FootballWesbshop.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ShoeSiteUser", b =>
+                {
+                    b.Property<string>("CartUid")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("OwnersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CartUid", "OwnersId");
+
+                    b.HasIndex("OwnersId");
+
+                    b.ToTable("ShoeSiteUser");
+                });
+
             modelBuilder.Entity("FootballWesbshop.Models.SiteUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
@@ -317,15 +332,7 @@ namespace FootballWesbshop.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FootballWesbshop.Models.SiteUser", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Brand");
-
-                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -375,6 +382,21 @@ namespace FootballWesbshop.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ShoeSiteUser", b =>
+                {
+                    b.HasOne("FootballWesbshop.Models.Shoe", null)
+                        .WithMany()
+                        .HasForeignKey("CartUid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FootballWesbshop.Models.SiteUser", null)
+                        .WithMany()
+                        .HasForeignKey("OwnersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

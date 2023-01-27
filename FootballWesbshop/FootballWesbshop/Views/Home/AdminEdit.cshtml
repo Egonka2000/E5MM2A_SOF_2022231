@@ -9,9 +9,9 @@
             @foreach (var item in shoe)
             {
                 <li>
-                    <img src="@Url.Action("GetImage", "Home", new {userid = item.OwnerId})" />
-                    @item.Owner.FirstName @item.Owner.LastName
-                    <a href="AdminDelete?uid=@item.Uid">Delete</a>
+                    <img src="@Url.Action("GetShoeImage", "Home", new {id = item.Uid})" />
+                    
+                    <a class="btn btn-danger" href="AdminDelete?uid=@item.Uid">Delete</a>
                 </li>
             }
         </ul>
