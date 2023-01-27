@@ -11,14 +11,59 @@ namespace FootballWesbshop.Controllers
     public class HomeController : Controller
     {
         private readonly UserManager<SiteUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManger;
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _db;
 
-        public HomeController(UserManager<SiteUser> userManager, ILogger<HomeController> logger, ApplicationDbContext db)
+        public HomeController(UserManager<SiteUser> userManager, RoleManager<IdentityRole> roleManger, ILogger<HomeController> logger, ApplicationDbContext db)
         {
-            this._userManager = userManager;
-            this._logger = logger;
-            this._db = db;
+            _userManager = userManager;
+            _roleManger = roleManger;
+            _logger = logger;
+            _db = db;
+        }
+
+        public async Task<IActionResult> DelegateAdmin()
+        {
+            var user = await _userManager.GetUserAsync(this.User);
+            var role = new IdentityRole()
+            {
+                Name = "Admin"
+            };
+            if (!await _roleManger.RoleExistsAsync("Admin"))
+            {
+                await _roleManger.CreateAsync(role);
+            }
+            await _userManager.AddToRoleAsync(user, "Admin");
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Admin()
+        {
+            return View(_db.Shoes);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Users()
+        {
+            return View(_userManager.Users);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RemoveAdmin(string uid)
+        {
+            var user = _userManager.Users.FirstOrDefault(t => t.Id == uid);
+            await _userManager.RemoveFromRoleAsync(user, "Admin");
+            return RedirectToAction(nameof(Users));
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GrantAdmin(string uid)
+        {
+            var user = _userManager.Users.FirstOrDefault(t => t.Id == uid);
+            await _userManager.AddToRoleAsync(user, "Admin");
+            return RedirectToAction(nameof(Users));
         }
 
         public IActionResult Index()
@@ -26,13 +71,13 @@ namespace FootballWesbshop.Controllers
             return View(_db.Shoes);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public IActionResult Add()
         {
             return View();
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult Add(Shoe shoe)
         {
@@ -51,6 +96,18 @@ namespace FootballWesbshop.Controllers
         {
             var item = _db.Shoes.FirstOrDefault(t => t.Uid == uid);
             if(item != null && item.OwnerId == _userManager.GetUserId(this.User)) 
+            {
+                _db.Shoes.Remove(item);
+                _db.SaveChanges();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult AdminDelete(string uid)
+        {
+            var item = _db.Shoes.FirstOrDefault(t => t.Uid == uid);
+            if (item != null)
             {
                 _db.Shoes.Remove(item);
                 _db.SaveChanges();
