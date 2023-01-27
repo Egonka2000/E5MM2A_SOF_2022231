@@ -2,6 +2,7 @@
 using FootballWesbshop.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Manage.Internal;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -14,13 +15,15 @@ namespace FootballWesbshop.Controllers
         private readonly RoleManager<IdentityRole> _roleManger;
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _db;
+        private readonly IEmailSender _emailSender;
 
-        public HomeController(UserManager<SiteUser> userManager, RoleManager<IdentityRole> roleManger, ILogger<HomeController> logger, ApplicationDbContext db)
+        public HomeController(UserManager<SiteUser> userManager, RoleManager<IdentityRole> roleManger, ILogger<HomeController> logger, ApplicationDbContext db, IEmailSender emailSender)
         {
             _userManager = userManager;
             _roleManger = roleManger;
             _logger = logger;
             _db = db;
+            _emailSender = emailSender;
         }
 
         public async Task<IActionResult> DelegateAdmin()
