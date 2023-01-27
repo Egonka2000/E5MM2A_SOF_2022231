@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace FootballWesbshop.Areas.Identity.Pages.Account
 {
@@ -76,15 +78,27 @@ namespace FootballWesbshop.Areas.Identity.Pages.Account
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
+        
+        public class TokenModel
+        {
+            public string access_token { get; set; }
+            public string token_type { get; set; }
+        }
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
             [EmailAddress]
             public string Email { get; set; }
+
+            [Required]
+            [StringLength(100)]
+            public string FirstName { get; set; }
+
+            [Required]
+            [StringLength(100)]
+            public string LastName { get; set; }
+
+            public string PictureUrl { get; set; }
         }
         
         public IActionResult OnGet() => RedirectToPage("./Login");
@@ -130,10 +144,20 @@ namespace FootballWesbshop.Areas.Identity.Pages.Account
                 ProviderDisplayName = info.ProviderDisplayName;
                 if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
                 {
+                    var id = info.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
                     Input = new InputModel
                     {
-                        Email = info.Principal.FindFirstValue(ClaimTypes.Email)
+                        Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+                        FirstName = info.Principal.FindFirstValue(ClaimTypes.Surname),
+                        LastName = info.Principal.FindFirstValue(ClaimTypes.GivenName),  
                     };
+                    if (info.ProviderDisplayName == "Facebook")
+                    {
+                        var access_token_json = new WebClient().DownloadString("http://graph.facebook.com/oauth/access_token?client_id=738152847735102&client_secret=77d701b24883496743d6e555abe29711&grant_type=client_credentials");
+                        var token = JsonConvert.DeserializeObject<TokenModel>(access_token_json);
+                        Input.PictureUrl = $"https://graph.facebook.com/{id}/picture?type=large&access_token={token.access_token}";
+                    }
+                        
                 }
                 return Page();
             }
@@ -153,6 +177,11 @@ namespace FootballWesbshop.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
+                var wc = new WebClient();
+                user.Data = wc.DownloadData(Input.PictureUrl);
+                user.ContentType = wc.ResponseHeaders["Content-Type"];
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

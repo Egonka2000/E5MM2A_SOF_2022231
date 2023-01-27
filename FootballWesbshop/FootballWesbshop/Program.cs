@@ -23,6 +23,12 @@ builder.Services.AddDefaultIdentity<SiteUser>(options =>
     options.Password.RequireUppercase = false;
 })
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddAuthentication().AddFacebook(opt =>
+    {
+        opt.AppId = "738152847735102";
+        opt.AppSecret = "77d701b24883496743d6e555abe29711";
+    });
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
