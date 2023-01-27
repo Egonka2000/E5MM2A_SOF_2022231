@@ -1,0 +1,22 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@model IEnumerable<Shoe>
+@inject SignInManager<SiteUser> SignInManager
+@inject UserManager<SiteUser> UserManager
+
+@foreach(var shoe in Model.GroupBy(t => t.Price)){
+    <li>@shoe.Key
+        <ul>
+            @foreach(var item in shoe)
+            {
+                <li>
+                    <img src="@Url.Action("GetImage", "Home", new {userid = item.OwnerId})"/>
+                    @item.Owner.FirstName @item.Owner.LastName
+                    @if (item.OwnerId == UserManager.GetUserId(User))
+                    {
+                        <a href="Home/Delete?uid=@item.Uid">Delete</a>
+                    }
+                </li>
+            }
+        </ul>
+    </li>
+}
