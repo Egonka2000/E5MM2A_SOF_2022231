@@ -14,7 +14,7 @@ namespace FootballWesbshop.Models
         public string BrandId { get; set; }
 
         [NotMapped]
-        public virtual Brand Brand { get; set; }
+        public virtual Brand? Brand { get; set; }
 
         [NotMapped]
         public virtual ICollection<SiteUser> Owners { get; set; }
