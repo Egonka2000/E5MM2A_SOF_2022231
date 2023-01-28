@@ -8,12 +8,14 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
+                <input asp-for="Price" class="form-control" required />
+                @Html.ValidationMessageFor(t => t.Price)
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Size" class="control-label"></label>
-                <input asp-for="Size" class="form-control" />
+                <input asp-for="Size" class="form-control" required />
+                @Html.ValidationMessageFor(t => t.Size)
                 <span asp-validation-for="Size" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -22,7 +24,7 @@
                 <span asp-validation-for="BrandId" class="text-danger"></span>
             </div>
             <div class="shoepicture">
-                <input type="file" name="picturedata" />
+                <input type="file" name="picturedata" required />
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

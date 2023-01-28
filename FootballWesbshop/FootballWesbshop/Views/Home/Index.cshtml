@@ -3,33 +3,30 @@
 @inject SignInManager<SiteUser> SignInManager
 @inject UserManager<SiteUser> UserManager
 
-@foreach(var shoe in Model.GroupBy(t => t.Brand.Name)){
-    <li>@shoe.Key
-        <ul>
-            @foreach(var item in shoe)
-            {
-                <li>
-                    <img src="@Url.Action("GetShoeImage", "Home", new {id = item.Uid})"/>
-                </li>
-                <li>
-                    <label>Price:</label>
-                    @item.Price 
-                </li>
-                <li>
-                    <label>Size:</label>
-                    @item.Size
-                </li>
-                <li>
-                    @if (!(await UserManager.GetUserAsync(User) as SiteUser).Cart.Contains(item))
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var shoe in Model)
+    {
+        <div class="col">
+            <div class="card">
+                <img src="@Url.Action("GetShoeImage", "Home", new {id = shoe.Uid})" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">Price: @shoe.Price</h5>
+                    <h5 class="card-title">Size: @shoe.Size</h5>
+                    @if (SignInManager.IsSignedIn(User))
                     {
-                        <a class="btn btn-success" href="Home/AddToCart?shoeid=@item.Uid">Add To Cart</a>
+                        @if (!(await UserManager.GetUserAsync(User) as SiteUser).Cart.Contains(shoe))
+                        {
+                            <a class="btn btn-success" href="Home/AddToCart?shoeid=@shoe.Uid">Add To Cart</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-danger" href="Home/RemoveFromCart?shoeid=@shoe.Uid">Remove From Cart</a>
+                        }
                     }
-                    else
-                    {
-                        <a class="btn btn-danger" href="Home/RemoveFromCart?shoeid=@item.Uid">Remove From Cart</a>
-                    }
-                </li>
-            }
-        </ul>
-    </li>
-}
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

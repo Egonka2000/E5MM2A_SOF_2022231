@@ -1,0 +1,28 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@model IEnumerable<Shoe>
+
+@foreach (var shoe in Model.GroupBy(t => t.Brand.Name))
+{
+    <li>
+        @shoe.Key
+        <ul>
+            @foreach (var item in shoe)
+            {
+                <li>
+                    <img src="@Url.Action("GetShoeImage", "Home", new {id = item.Uid})"/>
+                </li>
+                <li>
+                    <label>Price:</label>
+                    @item.Price 
+                </li>
+                <li>
+                    <label>Size:</label>
+                    @item.Size
+                </li>
+                <li>
+                    <a class="btn btn-danger" href="/Admin/AdminDelete?uid=@item.Uid">Delete</a>
+                </li>
+            }
+        </ul>
+    </li>
+}
