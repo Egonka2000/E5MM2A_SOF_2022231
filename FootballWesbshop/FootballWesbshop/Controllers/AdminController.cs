@@ -1,4 +1,5 @@
 ﻿using FootballWesbshop.Data;
+using FootballWesbshop.Logic;
 using FootballWesbshop.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -13,16 +14,16 @@ namespace FootballWesbshop.Controllers
         private readonly UserManager<SiteUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManger;
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _db;
         private readonly IEmailSender _emailSender;
+        IAdminLogic _adminLogic;
 
-        public AdminController(UserManager<SiteUser> userManager, RoleManager<IdentityRole> roleManger, ILogger<HomeController> logger, ApplicationDbContext db, IEmailSender emailSender)
+        public AdminController(UserManager<SiteUser> userManager, RoleManager<IdentityRole> roleManger, ILogger<HomeController> logger, IEmailSender emailSender, IAdminLogic adminlogic)
         {
             _userManager = userManager;
             _roleManger = roleManger;
             _logger = logger;
-            _db = db;
             _emailSender = emailSender;
+            _adminLogic = adminlogic;
         }
 
         public async Task<IActionResult> DelegateAdmin()
@@ -59,7 +60,7 @@ namespace FootballWesbshop.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult AdminEdit()
         {
-            return View(_db.Shoes);
+            return View(_adminLogic.ReadAllShoe());
         }
 
         [Authorize(Roles = "Admin")]
@@ -82,34 +83,20 @@ namespace FootballWesbshop.Controllers
             {
                 return View();
             }
-            var user = await _userManager.GetUserAsync(User);
-            using (var stream = picturedata.OpenReadStream())
-            {
-                byte[] buffer = new byte[picturedata.Length];
-                stream.Read(buffer, 0, (int)picturedata.Length);
-                shoe.Data = buffer;
-                shoe.ContentType = picturedata.ContentType;
-            }
-            shoe.BrandId = _db.Brands.FirstOrDefault(t => t.Name == shoe.BrandId).Uid;
-            var old = _db.Shoes.FirstOrDefault(t => t.Uid == shoe.Uid);
+            _adminLogic.CreateShoeImage(ref shoe, picturedata);
+            shoe.BrandId = _adminLogic.GetBrand(shoe.BrandId).Uid;
+            var old = _adminLogic.GetShoe(shoe.Uid);
             if (old == null)
             {
-                _db.Shoes.Add(shoe);
-                _db.SaveChanges();
+                _adminLogic.CreateShoe(shoe);
             }
-
             return RedirectToAction("Index", "Home");
         }
 
         [Authorize(Roles = "Admin")]
         public IActionResult AdminDelete(string uid)
         {
-            var item = _db.Shoes.FirstOrDefault(t => t.Uid == uid);
-            if (item != null)
-            {
-                _db.Shoes.Remove(item);
-                _db.SaveChanges();
-            }
+            _adminLogic.DeleteShoe(uid);
             return RedirectToAction(nameof(AdminEdit));
         }
     }
