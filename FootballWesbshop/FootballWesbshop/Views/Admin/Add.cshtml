@@ -23,6 +23,15 @@
                 <input asp-for="BrandId" class="form-control" />
                 <span asp-validation-for="BrandId" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <select name="type">
+                    <option value="Predator" selected>Predator</option>
+                    <option value="X">X</option>
+                    <option value="Nemesis">Nemesis</option>
+                    <option value="Mercurial">Mercurial</option>
+                    <option value="Hypervenom">Hypervenom</option>
+                </select>
+            </div>
             <div class="shoepicture">
                 <input type="file" name="picturedata" required />
             </div>

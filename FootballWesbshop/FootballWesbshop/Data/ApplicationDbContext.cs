@@ -28,8 +28,11 @@ namespace FootballWesbshop.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             
-            builder.Entity<Brand>().HasData(new Brand() { Name = "Adidas", Uid = "1" });
-            builder.Entity<Brand>().HasData(new Brand() { Name = "Nike", Uid = "2" });
+            builder.Entity<Brand>().HasData(new Brand() { Name = "Adidas", Uid = "1", Type = BrandType.Predator });
+            builder.Entity<Brand>().HasData(new Brand() { Name = "Adidas", Uid = "2", Type = BrandType.X });
+            builder.Entity<Brand>().HasData(new Brand() { Name = "Adidas", Uid = "3", Type = BrandType.Nemesis });
+            builder.Entity<Brand>().HasData(new Brand() { Name = "Nike", Uid = "4", Type = BrandType.Mercurial });
+            builder.Entity<Brand>().HasData(new Brand() { Name = "Nike", Uid = "5", Type = BrandType.Hypervenom });
 
             base.OnModelCreating(builder);
         }

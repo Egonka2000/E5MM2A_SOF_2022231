@@ -8,5 +8,6 @@ namespace FootballWesbshop.Logic
         IEnumerable<Shoe> ReadAllShoe();
         void AddShoeToCart(SiteUser user, Shoe shoe);
         void RemoveShoeFromCart(SiteUser user, Shoe shoe);
+        void ClearCart(SiteUser user);
     }
 }

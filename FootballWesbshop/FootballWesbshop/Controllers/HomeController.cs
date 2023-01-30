@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Manage.Internal;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace FootballWesbshop.Controllers
 {
@@ -69,6 +70,25 @@ namespace FootballWesbshop.Controllers
                 var user = await _userManager.GetUserAsync(this.User);
                 _homeLogic.RemoveShoeFromCart(user, shoe);
             }
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Cart()
+        {
+            var user = await _userManager.GetUserAsync(this.User);
+            return View(user.Cart);
+        }
+
+        public async Task<IActionResult> Order()
+        {
+            var user = await _userManager.GetUserAsync(this.User);
+            string ordered = "";
+            foreach (var item in user.Cart)
+            {
+                ordered += item + ", ";
+            }
+            _homeLogic.ClearCart(user);
+            await _emailSender.SendEmailAsync(user.Email, "You have ordered the following shoes: ", $"{ordered}");
             return RedirectToAction(nameof(Index));
         }
 

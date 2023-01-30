@@ -22,9 +22,10 @@ namespace FootballWesbshop.Logic
         {
             return _db.Shoes.FirstOrDefault(t => t.Uid == uid);
         }
-        public Brand GetBrand(string name)
+        public Brand GetBrand(string type)
         {
-            return _db.Brands.FirstOrDefault(t => t.Name == name);
+            var brandtype = (BrandType)Enum.Parse(typeof(BrandType), type);
+            return _db.Brands.FirstOrDefault(t => t.Type == brandtype);
         }
         public IEnumerable<Shoe> ReadAllShoe()
         {

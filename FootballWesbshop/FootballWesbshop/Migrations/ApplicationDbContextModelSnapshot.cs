@@ -31,6 +31,9 @@ namespace FootballWesbshop.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("Type")
+                        .HasColumnType("int");
+
                     b.HasKey("Uid");
 
                     b.ToTable("Brands");
@@ -39,12 +42,32 @@ namespace FootballWesbshop.Migrations
                         new
                         {
                             Uid = "1",
-                            Name = "Adidas"
+                            Name = "Adidas",
+                            Type = 0
                         },
                         new
                         {
                             Uid = "2",
-                            Name = "Nike"
+                            Name = "Adidas",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Uid = "3",
+                            Name = "Adidas",
+                            Type = 2
+                        },
+                        new
+                        {
+                            Uid = "4",
+                            Name = "Nike",
+                            Type = 3
+                        },
+                        new
+                        {
+                            Uid = "5",
+                            Name = "Nike",
+                            Type = 4
                         });
                 });
 

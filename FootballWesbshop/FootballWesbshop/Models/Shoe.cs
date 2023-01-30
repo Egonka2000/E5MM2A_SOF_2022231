@@ -24,5 +24,9 @@ namespace FootballWesbshop.Models
             Uid = Guid.NewGuid().ToString();
             Owners = new HashSet<SiteUser>();
         }
+        public override string ToString()
+        {
+            return $"{Brand.Name} {Brand.Type}";
+        }
     }
 }

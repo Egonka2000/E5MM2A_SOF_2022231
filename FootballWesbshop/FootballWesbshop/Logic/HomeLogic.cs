@@ -33,5 +33,11 @@ namespace FootballWesbshop.Logic
             user.Cart.Remove(shoe);
             _db.SaveChanges();
         }
+
+        public void ClearCart(SiteUser user)
+        {
+            user.Cart.Clear();
+            _db.SaveChanges();
+        }
     }
 }

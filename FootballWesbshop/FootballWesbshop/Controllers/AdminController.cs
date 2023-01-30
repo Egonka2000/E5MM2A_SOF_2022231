@@ -77,14 +77,14 @@ namespace FootballWesbshop.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Add(Shoe shoe, IFormFile picturedata)
+        public async Task<IActionResult> Add(Shoe shoe, IFormFile picturedata, string type)
         {
             if (!ModelState.IsValid)
             {
                 return View();
             }
+            shoe.Brand = _adminLogic.GetBrand(type);
             _adminLogic.CreateShoeImage(ref shoe, picturedata);
-            shoe.BrandId = _adminLogic.GetBrand(shoe.BrandId).Uid;
             var old = _adminLogic.GetShoe(shoe.Uid);
             if (old == null)
             {

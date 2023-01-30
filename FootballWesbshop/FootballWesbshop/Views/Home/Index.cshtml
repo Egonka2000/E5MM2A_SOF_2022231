@@ -13,6 +13,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Price: @shoe.Price</h5>
                     <h5 class="card-title">Size: @shoe.Size</h5>
+                    <h5 class="card-title">Type: @shoe.Brand.Type</h5>
                     @if (SignInManager.IsSignedIn(User))
                     {
                         @if (!(await UserManager.GetUserAsync(User) as SiteUser).Cart.Contains(shoe))
@@ -29,4 +30,3 @@
         </div>
     }
 </div>
-
