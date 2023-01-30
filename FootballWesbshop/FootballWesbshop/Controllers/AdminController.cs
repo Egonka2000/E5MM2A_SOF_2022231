@@ -1,4 +1,6 @@
-﻿using FootballWesbshop.Data;
+﻿using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs;
+using FootballWesbshop.Data;
 using FootballWesbshop.Logic;
 using FootballWesbshop.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -16,6 +18,8 @@ namespace FootballWesbshop.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IEmailSender _emailSender;
         IAdminLogic _adminLogic;
+        BlobServiceClient serviceClient;
+        BlobContainerClient containerClient;
 
         public AdminController(UserManager<SiteUser> userManager, RoleManager<IdentityRole> roleManger, ILogger<HomeController> logger, IEmailSender emailSender, IAdminLogic adminlogic)
         {
@@ -24,6 +28,8 @@ namespace FootballWesbshop.Controllers
             _logger = logger;
             _emailSender = emailSender;
             _adminLogic = adminlogic;
+            serviceClient = new BlobServiceClient("DefaultEndpointsProtocol=https;AccountName=oenikge;AccountKey=ZZViDM/xoxaleA9zO4AHfd5nDAzVkZpt8e6vSv0ZwEZPS8VRfBHaOJySt+hz3FBFRSZJXEgplLvK+ASt92lKTg==;EndpointSuffix=core.windows.net");
+            containerClient = serviceClient.GetBlobContainerClient("photos");
         }
 
         public async Task<IActionResult> DelegateAdmin()
@@ -84,7 +90,15 @@ namespace FootballWesbshop.Controllers
                 return View();
             }
             shoe.Brand = _adminLogic.GetBrand(type);
-            _adminLogic.CreateShoeImage(ref shoe, picturedata);
+
+            BlobClient blobClient = containerClient.GetBlobClient(shoe.Uid);
+            using (var uploadFileStream = picturedata.OpenReadStream())
+            {
+                await blobClient.UploadAsync(uploadFileStream, true);
+            }
+            blobClient.SetAccessTier(AccessTier.Cool);
+            shoe.PhotoUrl = blobClient.Uri.AbsoluteUri;
+
             var old = _adminLogic.GetShoe(shoe.Uid);
             if (old == null)
             {

@@ -1,4 +1,6 @@
-﻿using FootballWesbshop.Controllers;
+﻿using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs;
+using FootballWesbshop.Controllers;
 using FootballWesbshop.Data;
 using FootballWesbshop.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +15,6 @@ namespace FootballWesbshop.Logic
     {
         public ApplicationDbContext _db { get; set; }
         public AdminLogic(ApplicationDbContext db)
-
         {
             this._db = db;
         }
@@ -45,17 +46,6 @@ namespace FootballWesbshop.Logic
             {
                 _db.Shoes.Remove(shoe);
                 _db.SaveChanges();
-            }
-        }
-
-        public void CreateShoeImage(ref Shoe shoe, IFormFile picturedata)
-        {
-            using (var stream = picturedata.OpenReadStream())
-            {
-                byte[] buffer = new byte[picturedata.Length];
-                stream.Read(buffer, 0, (int)picturedata.Length);
-                shoe.Data = buffer;
-                shoe.ContentType = picturedata.ContentType;
             }
         }
     }

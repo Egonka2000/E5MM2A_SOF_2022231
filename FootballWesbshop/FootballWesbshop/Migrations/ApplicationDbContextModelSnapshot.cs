@@ -80,15 +80,16 @@ namespace FootballWesbshop.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ContentType")
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("Data")
-                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Price")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Sequence")
+                        .HasColumnType("int");
 
                     b.Property<string>("Size")
                         .IsRequired()

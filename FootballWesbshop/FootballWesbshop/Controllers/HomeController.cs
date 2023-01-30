@@ -1,4 +1,5 @@
-﻿using FootballWesbshop.Data;
+﻿using Azure.Storage.Blobs;
+using FootballWesbshop.Data;
 using FootballWesbshop.Logic;
 using FootballWesbshop.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -38,15 +39,6 @@ namespace FootballWesbshop.Controllers
         {
             var user =  _userManager.Users.FirstOrDefault(t => t.Id == userid);
             return new FileContentResult(user.Data, user.ContentType);
-        }
-
-        public IActionResult GetShoeImage(string id)
-        {
-            var shoe = _homeLogic.GetShoe(id);
-            if (shoe.ContentType.Length >= 3)
-                return new FileContentResult(shoe.Data, shoe.ContentType);
-            else
-                return BadRequest();
         }
 
         [Authorize]

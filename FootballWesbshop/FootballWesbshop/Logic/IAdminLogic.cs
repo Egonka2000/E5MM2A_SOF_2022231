@@ -9,6 +9,5 @@ namespace FootballWesbshop.Logic
         Shoe GetShoe(string uid);
         Brand GetBrand(string type);
         IEnumerable<Shoe> ReadAllShoe();
-        void CreateShoeImage(ref Shoe shoe, IFormFile picturedata);
     }
 }
