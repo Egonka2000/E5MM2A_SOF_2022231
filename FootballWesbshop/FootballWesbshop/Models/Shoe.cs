@@ -5,6 +5,7 @@ namespace FootballWesbshop.Models
 {
     public class Shoe
     {
+        static Random r = new Random();
         [Key]
         public string Uid { get; set; }
         public string Price { get; set; }
@@ -23,6 +24,7 @@ namespace FootballWesbshop.Models
         {
             Uid = Guid.NewGuid().ToString();
             Owners = new HashSet<SiteUser>();
+            Sequence = r.Next(10, 1000);
         }
         public override string ToString()
         {

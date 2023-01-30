@@ -9,5 +9,6 @@ namespace FootballWesbshop.Logic
         void AddShoeToCart(SiteUser user, Shoe shoe);
         void RemoveShoeFromCart(SiteUser user, Shoe shoe);
         void ClearCart(SiteUser user);
+        void Highlight();
     }
 }

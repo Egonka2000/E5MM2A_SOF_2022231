@@ -83,6 +83,11 @@ namespace FootballWesbshop.Controllers
             await _emailSender.SendEmailAsync(user.Email, "You have ordered the following shoes: ", $"{ordered}");
             return RedirectToAction(nameof(Index));
         }
+        public IActionResult HighlightShoe()
+        {
+            _homeLogic.Highlight();
+            return RedirectToAction(nameof(Index));
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
