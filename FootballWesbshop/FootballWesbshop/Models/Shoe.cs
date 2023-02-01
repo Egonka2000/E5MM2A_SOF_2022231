@@ -8,7 +8,9 @@ namespace FootballWesbshop.Models
         static Random r = new Random();
         [Key]
         public string Uid { get; set; }
+        [Required]
         public string Price { get; set; }
+        [Required]
         public string Size { get; set; }
         public int Sequence { get; set; }
         public string? PhotoUrl { get; set; }

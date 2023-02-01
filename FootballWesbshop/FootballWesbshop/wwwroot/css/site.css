@@ -18,11 +18,24 @@ body {
 }
 
 .profile {
+    margin-left: 10px;
     width: 50px;
     height: 50px;
     border-radius: 50px;
 }
-
+.nav-item{
+    margin: 10px;
+    display: inline-block;
+    text-decoration: none;
+}
+i
+{
+    margin-right: 10px;
+}
 ul {
     list-style-type: none;
+}
+button
+{
+    margin: 10px;
 }

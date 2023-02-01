@@ -5,12 +5,12 @@
 @if (SignInManager.IsSignedIn(User) && await UserManager.IsInRoleAsync(await  UserManager.GetUserAsync(User), "Admin"))
 {
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AdminEdit">Edit Shoes</a>
+        <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AdminEdit"><i class="bi bi-pencil"></i>Edit Shoes</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Users">Edit Users</a>
+        <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Users"><i class="bi bi-pencil"></i>Edit Users</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Add">Add Shoes</a>
+        <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Add"><i class="bi bi-plus-circle"></i>Add Shoes</a>
     </li>
 }
